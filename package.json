@@ -1,0 +1,10 @@
+{
+    "scripts": {
+        "setup": "npm install && (cd ./node && npm install) && (cd ./web && npm install)",
+        "generate": "(cd ./node && npm run generate) && (cd ./web && npm run generate)",
+        "build": "(cd ./node && npm run build) && (cd ./web && npm run build)",
+        "lint": "(cd ./node && npm run lint) && (cd ./web && npm run lint)",
+        "push": "(cd ./node && npm run push) && (cd ./web && npm run push)",
+        "github": "rsync -avzh --delete --delete-excluded --exclude=node_modules --exclude=.idea --exclude=.env --exclude=dist README.md LICENSE package.json generate node web ../github/js-client"
+    }
+}
