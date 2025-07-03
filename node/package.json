@@ -1,0 +1,67 @@
+{
+    "name": "@olvid/bot-node",
+    "type": "commonjs",
+    "main": "./dist/olvid.js",
+    "module": "./dist/olvid.mjs",
+    "types": "./dist/olvid.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/olvid.d.ts",
+            "require": "./dist/olvid.js",
+            "import": "./dist/olvid.mjs"
+        },
+        "./decorators": {
+            "types": "./dist/decorators.d.ts",
+            "require": "./dist/decorators.js",
+            "import": "./dist/decorators.mjs"
+        }
+    },
+    "version": "1.5.0",
+    "files": [
+        "README.md",
+        "LICENSE",
+        "package.json",
+        "./src/**/*",
+        "./dist/**/*"
+    ],
+    "exclude": [
+        "test"
+    ],
+    "directories": {
+        "src": "src",
+        "dist": "dist"
+    },
+    "homepage": "https://doc.bot.olvid.io",
+    "repository": {
+        "url": "git+https://github.com/olvid-io/Olvid-Bot-Documentation.git"
+    },
+    "keywords": [
+        "olvid",
+        "daemon",
+        "bot"
+    ],
+    "author": "bot@olvid.io",
+    "license": "LICENSE",
+    "description": "Develop Olvid Bots using nodejs.",
+    "scripts": {
+        "generate": "npx buf generate && npx tsx ../generate/enhancer/main.ts && echo Enhanced classes",
+        "build": "tsup",
+        "lint": "publint",
+        "prepublishOnly": "npm run generate && npm run build",
+        "push": "npm run build && echo 'YOU ARE ABOUT TO PUSH IN PROD (CTRL+C TO ABORT)' && read && npm publish"
+    },
+    "dependencies": {
+        "@bufbuild/protobuf": "^1.10.1",
+        "@connectrpc/connect-node": "^1.6.1",
+        "@types/node": "^22.9.0"
+    },
+    "devDependencies": {
+        "@bufbuild/buf": "^1.54.0",
+        "@bufbuild/protoc-gen-es": "^1.10.1",
+        "@connectrpc/protoc-gen-connect-es": "^1.6.1",
+        "@swc/core": "^1.11.24",
+        "publint": "^0.2.12",
+        "tsup": "^8.3.5",
+        "typescript": "^5.8.3"
+    }
+}

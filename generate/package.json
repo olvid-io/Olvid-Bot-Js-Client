@@ -1,0 +1,13 @@
+{
+  "name": "generate",
+  "version": "1.0.0",
+  "main": "main.ts",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@bufbuild/protoplugin": "^2.4.0",
+    "@types/node": "^22.15.29",
+    "tsx": "^4.19.4"
+  }
+}
