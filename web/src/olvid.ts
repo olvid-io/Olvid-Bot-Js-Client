@@ -9,7 +9,9 @@ import * as admin from "./gen/olvid/daemon/admin/v1/admin";
 
 import * as tools from "./tools/tools";
 
+import {helpers} from "./helpers/helpers";
+
 export * from "./types/error";
 export * from "./gen/decorators/decorators";
 
-export { OlvidClient, OlvidAdminClient, datatypes, commands, notifications, admin, services, tools };
+export { OlvidClient, OlvidAdminClient, datatypes, commands, notifications, admin, services, tools, helpers };

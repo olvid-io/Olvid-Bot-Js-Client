@@ -6,7 +6,8 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@bufbuild/protoplugin": "^2.4.0",
+    "@bufbuild/protoplugin": "^2.9.0",
+    "@bufbuild/protoc-gen-es": "^2.9.0",
     "@types/node": "^22.15.29",
     "tsx": "^4.19.4"
   }

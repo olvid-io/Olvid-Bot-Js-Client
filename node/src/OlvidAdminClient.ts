@@ -19,7 +19,6 @@ export default class OlvidAdminClient extends AbstractOlvidAdminClient {
 		let transportOptions: GrpcTransportOptions = {
 			baseUrl: serverUrl,
 			useBinaryFormat: true,
-			httpVersion: "2"
 		}
 		super(createGrpcTransport, transportOptions, clientKey, serverUrl, options.currentIdentityId);
 	}

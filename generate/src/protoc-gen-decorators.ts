@@ -8,7 +8,8 @@ export default function generateDecorators(schema: Schema): void {
     }
 
     const decoratorFile = schema.generateFile(`decorators/decorators.ts`);
-    decoratorFile.print("import {OlvidClient, datatypes} from '../../olvid';\n\n");
+    decoratorFile.print("import {OlvidClient, datatypes} from '../../olvid';");
+    decoratorFile.print("import {create} from \"@bufbuild/protobuf\";\n");
 
     // generate command (constant code)
     generateCommand(decoratorFile);
@@ -73,7 +74,7 @@ export function command(regexp_filter: string) {
     // Build the regex for the command (with optional aliases)
     context.addInitializer(function (this: This) {
       this.onMessageReceived({
-        filter: new datatypes.MessageFilter({ bodySearch: regexp_filter }),
+        filter: create(datatypes.MessageFilterSchema, { bodySearch: regexp_filter }),
         callback: async (message: datatypes.Message) => {
           const cmd_parameters = message.body.replace(
             new RegExp(regexp_filter),

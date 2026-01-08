@@ -1,5 +1,5 @@
 import {OlvidClient, datatypes} from '../../olvid';
-
+ import {create} from "@bufbuild/protobuf";
 
 // Custom decorators
 export function command(regexp_filter: string) {
@@ -19,7 +19,7 @@ export function command(regexp_filter: string) {
     // Build the regex for the command (with optional aliases)
     context.addInitializer(function (this: This) {
       this.onMessageReceived({
-        filter: new datatypes.MessageFilter({ bodySearch: regexp_filter }),
+        filter: create(datatypes.MessageFilterSchema, { bodySearch: regexp_filter }),
         callback: async (message: datatypes.Message) => {
           const cmd_parameters = message.body.replace(
             new RegExp(regexp_filter),
@@ -443,50 +443,6 @@ export function onGroupMemberPermissionsUpdated(options?: {count?: bigint, group
                 ...options,
                 callback: async (group: datatypes.Group,member: datatypes.GroupMember,previous_permissions: datatypes.GroupMemberPermissions) => {
                     await target.call(this, group,member,previous_permissions);
-                },
-            });
-        });
-    };
-}
-
-
-// GroupNotificationService: GroupUpdateInProgress
-// noinspection JSUnusedGlobalSymbols
-export function onGroupUpdateInProgress(options?: {count?: bigint, groupIds?: bigint[]}) {
-    return function <This extends OlvidClient>(
-        target: (this: This, group_id: bigint) => Promise<void>,
-        context: ClassMethodDecoratorContext<
-            This,
-            (this: This, group_id: bigint) => Promise<void>
-        >
-    ) {
-        context.addInitializer(function (this: This) {
-            this.onGroupUpdateInProgress({
-                ...options,
-                callback: async (group_id: bigint) => {
-                    await target.call(this, group_id);
-                },
-            });
-        });
-    };
-}
-
-
-// GroupNotificationService: GroupUpdateFinished
-// noinspection JSUnusedGlobalSymbols
-export function onGroupUpdateFinished(options?: {count?: bigint, groupIds?: bigint[]}) {
-    return function <This extends OlvidClient>(
-        target: (this: This, group_id: bigint) => Promise<void>,
-        context: ClassMethodDecoratorContext<
-            This,
-            (this: This, group_id: bigint) => Promise<void>
-        >
-    ) {
-        context.addInitializer(function (this: This) {
-            this.onGroupUpdateFinished({
-                ...options,
-                callback: async (group_id: bigint) => {
-                    await target.call(this, group_id);
                 },
             });
         });

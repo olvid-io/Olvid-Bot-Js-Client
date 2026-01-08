@@ -44,6 +44,7 @@ export abstract class AbstractOlvidClient {
         storageCommandStub: Client<typeof services.StorageCommandService>;
         discussionStorageCommandStub: Client<typeof services.DiscussionStorageCommandService>;
         callCommandStub: Client<typeof services.CallCommandService>;
+        settingsCommandStub: Client<typeof services.SettingsCommandService>;
         invitationNotificationStub: CallbackClient<typeof services.InvitationNotificationService>;
         contactNotificationStub: CallbackClient<typeof services.ContactNotificationService>;
         groupNotificationStub: CallbackClient<typeof services.GroupNotificationService>;
@@ -77,6 +78,7 @@ export abstract class AbstractOlvidClient {
             storageCommandStub: createClient(services.StorageCommandService, this.transport),
             discussionStorageCommandStub: createClient(services.DiscussionStorageCommandService, this.transport),
             callCommandStub: createClient(services.CallCommandService, this.transport),
+            settingsCommandStub: createClient(services.SettingsCommandService, this.transport),
             invitationNotificationStub: createCallbackClient(services.InvitationNotificationService, this.transport),
             contactNotificationStub: createCallbackClient(services.ContactNotificationService, this.transport),
             groupNotificationStub: createCallbackClient(services.GroupNotificationService, this.transport),
@@ -169,6 +171,19 @@ export abstract class AbstractOlvidClient {
         await this.stubs.toolCommandStub.ping(request)
     }
 
+   async daemonVersion(request: {} = {}): Promise<string> {
+        let response: command.DaemonVersionResponse = await this.stubs.toolCommandStub.daemonVersion(request)
+        return response.version!
+    }
+
+   async authenticationTest(request: {} = {}): Promise<void> {
+        await this.stubs.toolCommandStub.authenticationTest(request)
+    }
+
+   async authenticationAdminTest(request: {} = {}): Promise<void> {
+        await this.stubs.toolCommandStub.authenticationAdminTest(request)
+    }
+
     /*
     ** IdentityCommandService
     */
@@ -202,12 +217,9 @@ export abstract class AbstractOlvidClient {
         return response.photo!
     }
 
-   async identityKeycloakBind(request: {configurationLink: string}): Promise<void> {
-        await this.stubs.identityCommandStub.identityKeycloakBind(request)
-    }
-
-   async identityKeycloakUnbind(request: {} = {}): Promise<void> {
-        await this.stubs.identityCommandStub.identityKeycloakUnbind(request)
+   async identityGetApiKeyStatus(request: {} = {}): Promise<datatypes.Identity_ApiKey> {
+        let response: command.IdentityGetApiKeyStatusResponse = await this.stubs.identityCommandStub.identityGetApiKeyStatus(request)
+        return response.apiKey!
     }
 
    async identitySetApiKey(request: {apiKey: string}): Promise<datatypes.Identity_ApiKey> {
@@ -318,6 +330,14 @@ export abstract class AbstractOlvidClient {
     /*
     ** KeycloakCommandService
     */
+   async keycloakBindIdentity(request: {configurationLink: string}): Promise<void> {
+        await this.stubs.keycloakCommandStub.keycloakBindIdentity(request)
+    }
+
+   async keycloakUnbindIdentity(request: {} = {}): Promise<void> {
+        await this.stubs.keycloakCommandStub.keycloakUnbindIdentity(request)
+    }
+
     keycloakUserList(request: {filter?: datatypes.KeycloakUserFilter, lastListTimestamp?: bigint} = {}): AsyncIterable<command.KeycloakUserListResponse> {
         async function *list(keycloakCommandStub: Client<typeof services.KeycloakCommandService>): AsyncIterable<command.KeycloakUserListResponse> {
             for await (const response of keycloakCommandStub.keycloakUserList(request)) {
@@ -329,6 +349,11 @@ export abstract class AbstractOlvidClient {
 
    async keycloakAddUserAsContact(request: {keycloakId: string}): Promise<void> {
         await this.stubs.keycloakCommandStub.keycloakAddUserAsContact(request)
+    }
+
+   async keycloakGetApiCredentials(request: {} = {}): Promise<datatypes.KeycloakApiCredentials> {
+        let response: command.KeycloakGetApiCredentialsResponse = await this.stubs.keycloakCommandStub.keycloakGetApiCredentials(request)
+        return response.credentials!
     }
 
     /*
@@ -436,18 +461,13 @@ export abstract class AbstractOlvidClient {
         return response.discussion!
     }
 
-   async discussionEmpty(request: {discussionId: bigint, deleteEverywhere?: boolean}): Promise<void> {
+   async discussionEmpty(request: {discussionId: bigint}): Promise<void> {
         await this.stubs.discussionCommandStub.discussionEmpty(request)
     }
 
-   async discussionSettingsGet(request: {discussionId: bigint}): Promise<datatypes.DiscussionSettings> {
-        let response: command.DiscussionSettingsGetResponse = await this.stubs.discussionCommandStub.discussionSettingsGet(request)
-        return response.settings!
-    }
-
-   async discussionSettingsSet(request: {settings: datatypes.DiscussionSettings}): Promise<datatypes.DiscussionSettings> {
-        let response: command.DiscussionSettingsSetResponse = await this.stubs.discussionCommandStub.discussionSettingsSet(request)
-        return response.newSettings!
+   async discussionDownloadPhoto(request: {discussionId: bigint}): Promise<Uint8Array> {
+        let response: command.DiscussionDownloadPhotoResponse = await this.stubs.discussionCommandStub.discussionDownloadPhoto(request)
+        return response.photo!
     }
 
    discussionLockedList(request: {} = {}): AsyncIterable<datatypes.Discussion> {
@@ -519,16 +539,12 @@ export abstract class AbstractOlvidClient {
         return response.message!
     }
 
-   async messageReact(request: {messageId: datatypes.MessageId, reaction: string}): Promise<void> {
+   async messageReact(request: {messageId: datatypes.MessageId, reaction?: string}): Promise<void> {
         await this.stubs.messageCommandStub.messageReact(request)
     }
 
    async messageUpdateBody(request: {messageId: datatypes.MessageId, updatedBody: string}): Promise<void> {
         await this.stubs.messageCommandStub.messageUpdateBody(request)
-    }
-
-   async messageSendVoip(request: {discussionId: bigint}): Promise<void> {
-        await this.stubs.messageCommandStub.messageSendVoip(request)
     }
 
     /*
@@ -632,6 +648,29 @@ export abstract class AbstractOlvidClient {
    async callStartCustomCall(request: {contactIds?: bigint[], discussionId?: bigint}): Promise<string> {
         let response: command.CallStartCustomCallResponse = await this.stubs.callCommandStub.callStartCustomCall(request)
         return response.callIdentifier!
+    }
+
+    /*
+    ** SettingsCommandService
+    */
+   async settingsIdentityGet(request: {} = {}): Promise<datatypes.IdentitySettings> {
+        let response: command.SettingsIdentityGetResponse = await this.stubs.settingsCommandStub.settingsIdentityGet(request)
+        return response.identitySettings!
+    }
+
+   async settingsIdentitySet(request: {identitySettings: datatypes.IdentitySettings}): Promise<datatypes.IdentitySettings> {
+        let response: command.SettingsIdentitySetResponse = await this.stubs.settingsCommandStub.settingsIdentitySet(request)
+        return response.identitySettings!
+    }
+
+   async settingsDiscussionGet(request: {discussionId: bigint}): Promise<datatypes.DiscussionSettings> {
+        let response: command.SettingsDiscussionGetResponse = await this.stubs.settingsCommandStub.settingsDiscussionGet(request)
+        return response.discussionSettings!
+    }
+
+   async settingsDiscussionSet(request: {discussionSettings: datatypes.DiscussionSettings}): Promise<datatypes.DiscussionSettings> {
+        let response: command.SettingsDiscussionSetResponse = await this.stubs.settingsCommandStub.settingsDiscussionSet(request)
+        return response.discussionSettings!
     }
 
     /*
@@ -1267,72 +1306,6 @@ export abstract class AbstractOlvidClient {
         }
 
         cancelFn = this.stubs.groupNotificationStub.groupMemberPermissionsUpdated({count: args.count, groupIds: args.groupIds, groupFilter: args.groupFilter, memberFilter: args.memberFilter, previousPermissionFilter: args.previousPermissionFilter}, wrappedCallback, wrappedEndCallback, {signal: this.callbacksAbort.signal});
-        return cancelFn;
-    }
-
-    public onGroupUpdateInProgress(args: {callback: (groupId: bigint) => Promise<void> | void, endCallback?: (error ?: Error) => void, count?: bigint, groupIds?: bigint[]}): Function {
-        let cancelFn: Function;
-        const callbackId = crypto.randomUUID();
-        this.activeCallbacks.add(callbackId);
-
-        let wrappedCallback = (notification: notification.GroupUpdateInProgressNotification) => {
-            Promise.resolve()
-                .then(() => args.callback.call(this, notification.groupId!))
-                .catch(e => {
-                    console.error("onGroupUpdateInProgress", e);
-                });
-        };
-
-        let wrappedEndCallback = (error ?: Error) => {
-            if (error) {
-                // If this is a connection error, stop the client immediately
-                if (this.isConnectionError(error)) {
-                    console.error("onGroupUpdateInProgress: connection error, stopping client", error);
-                    this.stop();
-                    return;
-                }
-
-                console.error("onGroupUpdateInProgress: unexpected error", error);
-            }
-            args.endCallback ? args.endCallback(error) : undefined;
-            this.activeCallbacks.delete(callbackId);
-            this.callbackUpdate.emit("removed");
-        }
-
-        cancelFn = this.stubs.groupNotificationStub.groupUpdateInProgress({count: args.count, groupIds: args.groupIds}, wrappedCallback, wrappedEndCallback, {signal: this.callbacksAbort.signal});
-        return cancelFn;
-    }
-
-    public onGroupUpdateFinished(args: {callback: (groupId: bigint) => Promise<void> | void, endCallback?: (error ?: Error) => void, count?: bigint, groupIds?: bigint[]}): Function {
-        let cancelFn: Function;
-        const callbackId = crypto.randomUUID();
-        this.activeCallbacks.add(callbackId);
-
-        let wrappedCallback = (notification: notification.GroupUpdateFinishedNotification) => {
-            Promise.resolve()
-                .then(() => args.callback.call(this, notification.groupId!))
-                .catch(e => {
-                    console.error("onGroupUpdateFinished", e);
-                });
-        };
-
-        let wrappedEndCallback = (error ?: Error) => {
-            if (error) {
-                // If this is a connection error, stop the client immediately
-                if (this.isConnectionError(error)) {
-                    console.error("onGroupUpdateFinished: connection error, stopping client", error);
-                    this.stop();
-                    return;
-                }
-
-                console.error("onGroupUpdateFinished: unexpected error", error);
-            }
-            args.endCallback ? args.endCallback(error) : undefined;
-            this.activeCallbacks.delete(callbackId);
-            this.callbackUpdate.emit("removed");
-        }
-
-        cancelFn = this.stubs.groupNotificationStub.groupUpdateFinished({count: args.count, groupIds: args.groupIds}, wrappedCallback, wrappedEndCallback, {signal: this.callbacksAbort.signal});
         return cancelFn;
     }
 

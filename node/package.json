@@ -16,7 +16,7 @@
             "import": "./dist/decorators.mjs"
         }
     },
-    "version": "1.5.0",
+    "version": "2.0.0-alpha.0",
     "files": [
         "README.md",
         "LICENSE",
@@ -33,7 +33,7 @@
     },
     "homepage": "https://doc.bot.olvid.io",
     "repository": {
-        "url": "git+https://github.com/olvid-io/Olvid-Bot-Documentation.git"
+        "url": "git+https://github.com/olvid-io/Olvid-Bot-Js-Client.git"
     },
     "keywords": [
         "olvid",
@@ -44,21 +44,21 @@
     "license": "LICENSE",
     "description": "Develop Olvid Bots using nodejs.",
     "scripts": {
-        "generate": "npx buf generate && npx tsx ../generate/enhancer/main.ts && echo Enhanced classes",
+      "generate": "npx buf generate",
         "build": "tsup",
         "lint": "publint",
         "prepublishOnly": "npm run generate && npm run build",
         "push": "npm run build && echo 'YOU ARE ABOUT TO PUSH IN PROD (CTRL+C TO ABORT)' && read && npm publish"
     },
     "dependencies": {
-        "@bufbuild/protobuf": "^1.10.1",
-        "@connectrpc/connect-node": "^1.6.1",
-        "@types/node": "^22.9.0"
+        "@bufbuild/protobuf": "^2.9.0",
+        "@connectrpc/connect-node": "^2.1.0",
+        "@types/node": "^22.9.0",
+        "tsx": "^4.20.6"
     },
     "devDependencies": {
-        "@bufbuild/buf": "^1.54.0",
-        "@bufbuild/protoc-gen-es": "^1.10.1",
-        "@connectrpc/protoc-gen-connect-es": "^1.6.1",
+        "@bufbuild/buf": "^1.57.2",
+        "@bufbuild/protoc-gen-es": "^2.8.0",
         "@swc/core": "^1.11.24",
         "publint": "^0.2.12",
         "tsup": "^8.3.5",

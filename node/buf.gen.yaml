@@ -7,9 +7,6 @@ plugins:
   - local: protoc-gen-es
     opt: target=ts
     out: ./src/gen
-  - local: protoc-gen-connect-es
-    opt: target=ts
-    out: ./src/gen
   - local: ["npx", "tsx", "../generate/src/protoc-gen-olvid-client.ts"]
     opt: target=ts
     out: ./src/gen
