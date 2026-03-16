@@ -1,5 +1,5 @@
 import {OlvidClient, datatypes} from '../../olvid';
- import {create} from "@bufbuild/protobuf";
+import {create} from "@bufbuild/protobuf";
 
 // Custom decorators
 export function command(regexp_filter: string) {

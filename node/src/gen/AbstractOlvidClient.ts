@@ -15,7 +15,7 @@ import EventEmitter from "events";
 
 export abstract class AbstractOlvidClient {
     public readonly clientKey?: string;
-    public readonly serverUrl?: string;
+    public readonly daemonUrl?: string;
 
     protected readonly transport: Transport;
 
@@ -55,9 +55,9 @@ export abstract class AbstractOlvidClient {
 
     };
 
-    protected constructor(transportCreationMethod: (options: any) => Transport, transportOptions: any, clientKey?: string, serverUrl?: string) {
+    protected constructor(transportCreationMethod: (options: any) => Transport, transportOptions: any, clientKey?: string, daemonUrl?: string) {
         this.clientKey = clientKey;
-        this.serverUrl = serverUrl;
+        this.daemonUrl = daemonUrl;
 
         transportOptions.interceptors ?
             transportOptions.interceptors.push(this.getAuthenticationInterceptor())
@@ -349,11 +349,6 @@ export abstract class AbstractOlvidClient {
 
    async keycloakAddUserAsContact(request: {keycloakId: string}): Promise<void> {
         await this.stubs.keycloakCommandStub.keycloakAddUserAsContact(request)
-    }
-
-   async keycloakGetApiCredentials(request: {} = {}): Promise<datatypes.KeycloakApiCredentials> {
-        let response: command.KeycloakGetApiCredentialsResponse = await this.stubs.keycloakCommandStub.keycloakGetApiCredentials(request)
-        return response.credentials!
     }
 
     /*

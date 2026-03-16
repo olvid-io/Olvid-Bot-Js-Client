@@ -16,8 +16,8 @@ export abstract class AbstractOlvidAdminClient extends AbstractOlvidClient {
 
     };
 
-    protected constructor(transportCreationMethod: (options: any) => Transport, transportOptions: any, clientKey?: string, serverUrl?: string, currentIdentityId: number = 0) {
-        super(transportCreationMethod, transportOptions, clientKey, serverUrl);
+    protected constructor(transportCreationMethod: (options: any) => Transport, transportOptions: any, clientKey?: string, daemonUrl?: string, currentIdentityId: number = 0) {
+        super(transportCreationMethod, transportOptions, clientKey, daemonUrl);
         this.currentIdentityId = currentIdentityId ?? 0;
         this.adminStubs = {
             clientKeyAdminStub: createClient(services.ClientKeyAdminService, this.transport),

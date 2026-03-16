@@ -1,7 +1,9 @@
 import { createEcmaScriptPlugin, runNodeJs, Schema } from "@bufbuild/protoplugin";
 import { DescMethod, DescService } from "@bufbuild/protobuf/dist/esm/descriptors";
 import { getFieldAsAParameter, getFieldTsType, getMessageTsType } from "./tools";
-import { olvidClientTemplate, olvidAdminClientTemplate } from "./olvid_client_templates";
+import * as olvid_templates from "./olvid_client_templates";
+import * as web_olvid_templates from "./web_olvid_client_templates";
+
 
 function dumpCommandMethod(service: DescService, method: DescMethod): string {
     // is list method (specific case)
@@ -151,7 +153,7 @@ function dumpNotificationMethod(service: DescService, method: DescMethod): strin
     }`
 }
 
-export function generateOlvidClient(schema: Schema) {
+export function generateOlvidClient(schema: Schema, web: boolean) {
     // generate fron service files only
     if (schema.files.filter(f => f.name.includes("/services/")).length === 0) {
         return;
@@ -200,14 +202,14 @@ export function generateOlvidClient(schema: Schema) {
         {pattern: "//@CLIENT_METHODS@", value: clientMethods}
     ];
 
-    let template: string = olvidClientTemplate;
+    let template: string = web ? web_olvid_templates.olvidClientTemplate : olvid_templates.olvidClientTemplate;
     for (let el of templateMap) {
         template = template.replace(el.pattern, el.value);
     }
     clientFile.print(template)
 }
 
-export function generateOlvidAdminClient(schema: Schema) {
+export function generateOlvidAdminClient(schema: Schema, web: boolean) {
     // generate fron service files only
     if (schema.files.filter(f => f.name.includes("/services/")).length === 0) {
         return;
@@ -239,7 +241,7 @@ export function generateOlvidAdminClient(schema: Schema) {
         stubCreation += `            ${stubName}: createClient(services.${service.name}, this.transport),\n`;
     })
 
-    let template: string = olvidAdminClientTemplate;
+    let template: string = web ? web_olvid_templates.olvidAdminClientTemplate : olvid_templates.olvidAdminClientTemplate;
     let templateMap: {pattern: string, value: string}[] = [
         {pattern: "//@ADMIN_CLIENT_STUB_DECLARATION@", value: stubDeclaration},
         {pattern: "//@ADMIN_CLIENT_STUB_CREATION@", value: stubCreation},
@@ -255,23 +257,25 @@ export function generateOlvidAdminClient(schema: Schema) {
 const plugin = createEcmaScriptPlugin({
     name: "protoc-gen-olvid-client",
     version: process.env.npm_package_version ?? "1.0.0",
-
-    // parseOptions: (rawOptions) => {
-    //     const defaultOptions = {
-    //         "decorators": true
-    //     }
-    //     for (let option of rawOptions) {
-    //         if (option["key"] == "decorators") {
-    //             if (option["value"] == "ignore") {
-    //                 defaultOptions["decorators"] = false;
-    //             }
-    //         }
-    //     }
-    //     return defaultOptions;
-    // },
+    // web option: change OlvidClient template to use
+    parseOptions: (rawOptions) => {
+        const defaultOptions = {
+            "web": false
+        }
+        for (let option of rawOptions) {
+            if (option["key"] == "web") {
+                if (option["value"].toLowerCase() == "true") {
+                    defaultOptions["web"] = true;
+                }
+            }
+        }
+        return defaultOptions;
+    },
     generateTs: function (schema: Schema): void {
-        generateOlvidClient(schema);
-        generateOlvidAdminClient(schema);
+        // @ts-ignore
+        let web: boolean = schema.options.web;
+        generateOlvidClient(schema, web);
+        generateOlvidAdminClient(schema, web);
     }
 });
 

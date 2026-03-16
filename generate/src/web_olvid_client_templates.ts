@@ -15,7 +15,7 @@ import EventEmitter from "events";
 
 export abstract class AbstractOlvidClient {
     public readonly clientKey?: string;
-    public readonly daemonUrl?: string;
+    public readonly grpcWebProxyUrl?: string;
 
     protected readonly transport: Transport;
 
@@ -35,9 +35,9 @@ export abstract class AbstractOlvidClient {
 //@CLIENT_STUB_DECLARATION@
     };
 
-    protected constructor(transportCreationMethod: (options: any) => Transport, transportOptions: any, clientKey?: string, daemonUrl?: string) {
+    protected constructor(transportCreationMethod: (options: any) => Transport, transportOptions: any, clientKey?: string, grpcWebProxyUrl?: string) {
         this.clientKey = clientKey;
-        this.daemonUrl = daemonUrl;
+        this.grpcWebProxyUrl = grpcWebProxyUrl;
 
         transportOptions.interceptors ?
             transportOptions.interceptors.push(this.getAuthenticationInterceptor())
@@ -162,8 +162,8 @@ export abstract class AbstractOlvidAdminClient extends AbstractOlvidClient {
 //@ADMIN_CLIENT_STUB_DECLARATION@
     };
 
-    protected constructor(transportCreationMethod: (options: any) => Transport, transportOptions: any, clientKey?: string, daemonUrl?: string, currentIdentityId: number = 0) {
-        super(transportCreationMethod, transportOptions, clientKey, daemonUrl);
+    protected constructor(transportCreationMethod: (options: any) => Transport, transportOptions: any, clientKey?: string, grpcWebProxyUrl?: string, currentIdentityId: number = 0) {
+        super(transportCreationMethod, transportOptions, clientKey, grpcWebProxyUrl);
         this.currentIdentityId = currentIdentityId ?? 0;
         this.adminStubs = {
 //@ADMIN_CLIENT_STUB_CREATION@

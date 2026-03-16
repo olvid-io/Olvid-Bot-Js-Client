@@ -4,7 +4,8 @@ import {
     MessageEphemerality,
     GroupMemberSchema,
     Message,
-    GroupMemberPermissions
+    GroupMemberPermissions,
+    Discussion
 } from "../gen/olvid/daemon/datatypes/v1/datatypes";
 import {create} from "@bufbuild/protobuf";
 
@@ -59,6 +60,16 @@ export default abstract class GroupHelper {
                 ephemerality: options?.ephemerality ?? undefined
             })
         }
+    }
+
+    /**
+     * Retrieves the group discussion with this contact
+     * @param client - The Olvid client instance
+     * @param group concerned group
+     * @returns Promise that resolves to the discussion object
+     */
+    public static async getDiscussion(client: OlvidClient, group: Group): Promise<Discussion> {
+        return await client.discussionGetByGroup({groupId: group.id});
     }
 
     /**
