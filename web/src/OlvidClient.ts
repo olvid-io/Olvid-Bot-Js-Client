@@ -1,7 +1,7 @@
 import {AbstractOlvidClient} from "./gen/AbstractOlvidClient";
 import { createGrpcWebTransport, type GrpcWebTransportOptions } from "@connectrpc/connect-web";
 import * as datatypes from "./gen/olvid/daemon/datatypes/v1/datatypes";
-import {create, equals} from "@bufbuild/protobuf";
+import {create} from "@bufbuild/protobuf";
 
 // noinspection HttpUrlsUsage
 export default class OlvidClient extends AbstractOlvidClient {
@@ -39,29 +39,23 @@ export default class OlvidClient extends AbstractOlvidClient {
             invitation = create(datatypes.IdentitySettings_AutoAcceptInvitationSchema, options);
         }
         let identitySettings: datatypes.IdentitySettings = await this.settingsIdentityGet()
-        if (!equals(datatypes.IdentitySettings_AutoAcceptInvitationSchema, identitySettings.invitation!, invitation)) {
-            identitySettings.invitation = invitation;
-            await this.settingsIdentitySet({identitySettings});
-        }
+        identitySettings.invitation = invitation;
+        await this.settingsIdentitySet({identitySettings});
     }
 
     // noinspection JSUnusedGlobalSymbols
     public async enableKeycloakAutoInvite(options: { autoInviteNewMembers?: boolean}) {
         let keycloak: datatypes.IdentitySettings_Keycloak = create(datatypes.IdentitySettings_KeycloakSchema, options);
         let identitySettings: datatypes.IdentitySettings = await this.settingsIdentityGet()
-        if (!equals(datatypes.IdentitySettings_KeycloakSchema, identitySettings.keycloak!, keycloak)) {
-            identitySettings.keycloak = keycloak;
-            await this.settingsIdentitySet({identitySettings});
-        }
+        identitySettings.keycloak = keycloak;
+        await this.settingsIdentitySet({identitySettings});
     }
 
     // noinspection JSUnusedGlobalSymbols
     public async setMessageRetentionPolicy(options: {existenceDuration?: bigint, discussionCount?: bigint, globalCount?: bigint, cleanLockedDiscussions?: boolean, preserveIsSharingLocationMessages?: boolean}) {
         let messageRetention: datatypes.IdentitySettings_MessageRetention = create(datatypes.IdentitySettings_MessageRetentionSchema, options);
         let identitySettings: datatypes.IdentitySettings = await this.settingsIdentityGet()
-        if (!equals(datatypes.IdentitySettings_MessageRetentionSchema, identitySettings.messageRetention!, messageRetention)) {
-            identitySettings.messageRetention = messageRetention;
-            await this.settingsIdentitySet({identitySettings});
-        }
+        identitySettings.messageRetention = messageRetention;
+        await this.settingsIdentitySet({identitySettings});
     }
 }
