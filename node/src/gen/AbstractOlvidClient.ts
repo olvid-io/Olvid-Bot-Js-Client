@@ -206,15 +206,15 @@ export abstract class AbstractOlvidClient {
         await this.stubs.identityCommandStub.identityUpdateDetails(request)
     }
 
-   async identityRemovePhoto(request: {} = {}): Promise<void> {
-        await this.stubs.identityCommandStub.identityRemovePhoto(request)
-    }
-
 	// IdentitySetPhoto: cannot generate code for client and bidirectional streaming
 
    async identityDownloadPhoto(request: {} = {}): Promise<Uint8Array> {
         let response: command.IdentityDownloadPhotoResponse = await this.stubs.identityCommandStub.identityDownloadPhoto(request)
         return response.photo!
+    }
+
+   async identityRemovePhoto(request: {} = {}): Promise<void> {
+        await this.stubs.identityCommandStub.identityRemovePhoto(request)
     }
 
    async identityGetApiKeyStatus(request: {} = {}): Promise<datatypes.Identity_ApiKey> {
@@ -410,16 +410,16 @@ export abstract class AbstractOlvidClient {
         return response.group!
     }
 
-   async groupUnsetPhoto(request: {groupId: bigint}): Promise<datatypes.Group> {
-        let response: command.GroupUnsetPhotoResponse = await this.stubs.groupCommandStub.groupUnsetPhoto(request)
-        return response.group!
-    }
-
 	// GroupSetPhoto: cannot generate code for client and bidirectional streaming
 
    async groupDownloadPhoto(request: {groupId: bigint}): Promise<Uint8Array> {
         let response: command.GroupDownloadPhotoResponse = await this.stubs.groupCommandStub.groupDownloadPhoto(request)
         return response.photo!
+    }
+
+   async groupUnsetPhoto(request: {groupId: bigint}): Promise<datatypes.Group> {
+        let response: command.GroupUnsetPhotoResponse = await this.stubs.groupCommandStub.groupUnsetPhoto(request)
+        return response.group!
     }
 
     /*
@@ -499,20 +499,24 @@ export abstract class AbstractOlvidClient {
         return response.message!
     }
 
-   async messageRefresh(request: {} = {}): Promise<void> {
-        await this.stubs.messageCommandStub.messageRefresh(request)
-    }
-
-   async messageDelete(request: {messageId: datatypes.MessageId, deleteEverywhere?: boolean}): Promise<void> {
-        await this.stubs.messageCommandStub.messageDelete(request)
-    }
-
    async messageSend(request: {discussionId: bigint, body: string, replyId?: datatypes.MessageId, ephemerality?: datatypes.MessageEphemerality, disableLinkPreview?: boolean}): Promise<datatypes.Message> {
         let response: command.MessageSendResponse = await this.stubs.messageCommandStub.messageSend(request)
         return response.message!
     }
 
 	// MessageSendWithAttachments: cannot generate code for client and bidirectional streaming
+
+   async messageReact(request: {messageId: datatypes.MessageId, reaction?: string}): Promise<void> {
+        await this.stubs.messageCommandStub.messageReact(request)
+    }
+
+   async messageUpdateBody(request: {messageId: datatypes.MessageId, updatedBody: string}): Promise<void> {
+        await this.stubs.messageCommandStub.messageUpdateBody(request)
+    }
+
+   async messageDelete(request: {messageId: datatypes.MessageId, deleteEverywhere?: boolean}): Promise<void> {
+        await this.stubs.messageCommandStub.messageDelete(request)
+    }
 
    async messageSendLocation(request: {discussionId: bigint, latitude: number, longitude: number, altitude?: number, precision?: number, address?: string, previewFilename?: string, previewPayload?: Uint8Array, ephemerality?: datatypes.MessageEphemerality}): Promise<datatypes.Message> {
         let response: command.MessageSendLocationResponse = await this.stubs.messageCommandStub.messageSendLocation(request)
@@ -534,12 +538,8 @@ export abstract class AbstractOlvidClient {
         return response.message!
     }
 
-   async messageReact(request: {messageId: datatypes.MessageId, reaction?: string}): Promise<void> {
-        await this.stubs.messageCommandStub.messageReact(request)
-    }
-
-   async messageUpdateBody(request: {messageId: datatypes.MessageId, updatedBody: string}): Promise<void> {
-        await this.stubs.messageCommandStub.messageUpdateBody(request)
+   async messageRefresh(request: {} = {}): Promise<void> {
+        await this.stubs.messageCommandStub.messageRefresh(request)
     }
 
     /*
@@ -561,7 +561,7 @@ export abstract class AbstractOlvidClient {
         return response.attachment!
     }
 
-   async attachmentDelete(request: {attachmentId: datatypes.AttachmentId, deleteEverywhere?: boolean}): Promise<void> {
+   async attachmentDelete(request: {attachmentId: datatypes.AttachmentId}): Promise<void> {
         await this.stubs.attachmentCommandStub.attachmentDelete(request)
     }
 
@@ -1271,7 +1271,7 @@ export abstract class AbstractOlvidClient {
         return cancelFn;
     }
 
-    public onGroupMemberPermissionsUpdated(args: {callback: (group: datatypes.Group, member: datatypes.GroupMember, previousPermissions: datatypes.GroupMemberPermissions) => Promise<void> | void, endCallback?: (error ?: Error) => void, count?: bigint, groupIds?: bigint[], groupFilter?: datatypes.GroupFilter, memberFilter?: datatypes.GroupMemberFilter, previousPermissionFilter?: datatypes.GroupMemberFilter}): Function {
+    public onGroupMemberPermissionsUpdated(args: {callback: (group: datatypes.Group, member: datatypes.GroupMember, previousPermissions: datatypes.GroupMemberPermissions) => Promise<void> | void, endCallback?: (error ?: Error) => void, count?: bigint, groupIds?: bigint[], groupFilter?: datatypes.GroupFilter, memberFilter?: datatypes.GroupMemberFilter, previousPermissionFilter?: datatypes.GroupPermissionFilter}): Function {
         let cancelFn: Function;
         const callbackId = crypto.randomUUID();
         this.activeCallbacks.add(callbackId);

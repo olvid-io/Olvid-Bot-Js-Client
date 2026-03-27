@@ -62,8 +62,8 @@ export default abstract class AttachmentHelper {
      * @param deleteEverywhere - Whether to delete the message for all participants (default: false)
      * @returns Promise that resolves when the attachment is deleted
      */
-    public static async delete(client: OlvidClient, attachment: Attachment, deleteEverywhere: boolean = false): Promise<void> {
-        await client.attachmentDelete({ attachmentId: attachment.id!, deleteEverywhere });
+    public static async delete(client: OlvidClient, attachment: Attachment): Promise<void> {
+        await client.attachmentDelete({ attachmentId: attachment.id! });
     }
 
     /**

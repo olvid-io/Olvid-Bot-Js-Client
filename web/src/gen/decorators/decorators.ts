@@ -430,7 +430,7 @@ export function onGroupOwnPermissionsUpdated(options?: {count?: bigint, groupIds
 
 // GroupNotificationService: GroupMemberPermissionsUpdated
 // noinspection JSUnusedGlobalSymbols
-export function onGroupMemberPermissionsUpdated(options?: {count?: bigint, groupIds?: bigint[], groupFilter?: datatypes.GroupFilter, memberFilter?: datatypes.GroupMemberFilter, previousPermissionFilter?: datatypes.GroupMemberFilter}) {
+export function onGroupMemberPermissionsUpdated(options?: {count?: bigint, groupIds?: bigint[], groupFilter?: datatypes.GroupFilter, memberFilter?: datatypes.GroupMemberFilter, previousPermissionFilter?: datatypes.GroupPermissionFilter}) {
     return function <This extends OlvidClient>(
         target: (this: This, group: datatypes.Group,member: datatypes.GroupMember,previous_permissions: datatypes.GroupMemberPermissions) => Promise<void>,
         context: ClassMethodDecoratorContext<
